@@ -1,5 +1,5 @@
 <div [formGroup]="form" class="course-details-form">
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="outline">
     <input matInput placeholder="Course title" formControlName="title" #title />
 
     <mat-hint align="end"> {{ title.value.length }} /60 </mat-hint>
@@ -15,7 +15,7 @@
     <mat-radio-button value="premium">Premium</mat-radio-button>
   </mat-radio-group>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="outline">
     <mat-select formControlName="category" placeholder="Select Category">
       <mat-option>None</mat-option>
 
@@ -63,4 +63,17 @@
 
   </mat-checkbox>
 
+<!--Textarea--->
+
+
+<mat-form-field appearance="outline">
+
+<textarea matInput placeholder="Description"  formControlName="longDescription" cdkTextareaAutosize>
+
+
+</textarea>
+
+
+
+</mat-form-field>
 </div>

@@ -22,6 +22,7 @@ import {
 } from "rxjs/operators";
 import { merge, fromEvent, throwError } from "rxjs";
 import { Lesson } from "../model/lesson";
+import { SelectionModel } from "@angular/cdk/collections";
 
 @Component({
   selector: "course",
@@ -33,13 +34,25 @@ export class CourseComponent implements OnInit, AfterViewInit {
 
   lessons: Lesson[] = [];
 
-  loading: boolean = false; //spinner
+
+  loading = false; //spinner
+
+@ViewChild(MatPaginator)
+  paginator: MatPaginator;//Paginator
+
+  @ViewChild(MatSort)
+sort: MatSort;
+
+selection = new SelectionModel<Lesson>(true,[]);
+
   constructor(
     private route: ActivatedRoute,
     private coursesService: CoursesService
   ) {}
 
-  displayedColumns = ["seqNo", "description", "duration"];
+  displayedColumns = ['select', 'seqNo', 'description', 'duration'];
+
+  expandedLesson: Lesson = null;
 
   ngOnInit() {
     this.course = this.route.snapshot.data["course"];
@@ -47,13 +60,27 @@ export class CourseComponent implements OnInit, AfterViewInit {
     this.loadLessonsPage();
   }
 
+  onLessonToggled(lesson:Lesson){
+
+
+this.selection.toggle(lesson);
+
+
+console.log(this.selection.selected);
+
+  }
+
   loadLessonsPage() {
     this.loading = true; //spinner
 
     this.coursesService
-      .findLessons(this.course.id, "asc", 0, 3) //for paging
+      .findLessons(this.course.id,
+        this.sort?.direction?? "asc",
+      this.paginator?.pageIndex ?? 0,
+      this.paginator?.pageSize?? 3,
+      this.sort?.active?? "seqNo") //for paging
       .pipe(
-        tap((lessons) => (this.lessons = lessons)),
+        tap(lessons => (this.lessons = lessons)),
         catchError((err) => {
           console.log("Error loading lessons", err);
           alert("Error loading lessons.");
@@ -63,5 +90,64 @@ export class CourseComponent implements OnInit, AfterViewInit {
       )
       .subscribe();
   }
-  ngAfterViewInit() {}
+
+
+  onToggleLesson(lesson:Lesson){
+
+if(lesson == this.expandedLesson){
+
+this.expandedLesson = null;
+}
+else{
+
+this.expandedLesson = lesson;
+
+}
+
+  }
+  ngAfterViewInit() {
+
+
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0)
+
+
+merge(this.sort.sortChange,this.paginator.page)
+
+
+this.sort.sortChange
+
+
+
+.pipe(
+
+  tap(() => this.loadLessonsPage())
+
+
+)
+.subscribe();
+
+  }
+
+  isAllSelected(){
+
+return this.selection.selected?.length == this.lessons?.length
+
+
+  }
+
+  toggleAll(){
+
+
+    if(this.isAllSelected()){
+this.selection.clear()
+
+    }
+else{
+
+  this.selection.select(...this.lessons)
+
+
+}
+
+  }
 }

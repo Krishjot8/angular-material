@@ -31,7 +31,7 @@ Breakpoints.HandsetPortrait,
 Breakpoints.HandsetLandscape])
 .subscribe(result =>{
 
-  this.cols = 3
+  this.cols = 2
   this.rowHeight = "500px";
   this.handsetPortrait = false;
 

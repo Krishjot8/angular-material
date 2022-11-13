@@ -4,9 +4,8 @@
 
     <mat-list class="mat-elevation-z7">
       <cdk-virtual-scroll-viewport itemSize="48" class="scrolling-container">
-        <mat-list-item *cdkVirtualFor="let item of items; let index = index">
-          let count = count; let first = first; let last = last; let even =
-          even; let odd = odd;
+        <mat-list-item *cdkVirtualFor="let item of items;">
+
 
           {{ item }}
         </mat-list-item>
